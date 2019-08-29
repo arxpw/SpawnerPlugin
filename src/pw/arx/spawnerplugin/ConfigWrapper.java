@@ -22,7 +22,7 @@ public class ConfigWrapper {
     }
 
     public void createNewFile(final String message, final String header) {
-        reloadConfig();
+        reloadConfig(header);
         saveConfig();
         loadConfig(header);
 
@@ -33,7 +33,7 @@ public class ConfigWrapper {
 
     public FileConfiguration getConfig() {
         if (config == null) {
-            reloadConfig();
+            reloadConfig(fileName);
         }
         return config;
     }
@@ -44,12 +44,12 @@ public class ConfigWrapper {
         saveConfig();
     }
 
-    public void reloadConfig() {
-    	System.out.println("RELOADING " + fileName);
+    public void reloadConfig(String header) {
         if (configFile == null) {
             configFile = new File(plugin.getDataFolder() + folderName, fileName);
         }
         config = YamlConfiguration.loadConfiguration(configFile);
+        config.options().header(header);
     }
 
     public void saveConfig() {

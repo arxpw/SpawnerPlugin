@@ -2,8 +2,6 @@ package pw.arx.spawnerplugin;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,16 +12,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import net.md_5.bungee.api.ChatColor;
 
 public class PlaceListener implements Listener {
 
-	FileConfiguration config = SpawnerPlugin.getPlugin().getConfig();
+	
 	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
+		FileConfiguration config = SpawnerPlugin.getPlugin().getConfig();
 		Block b = event.getBlock();
 		Material bt = b.getType();
 		
@@ -49,8 +47,6 @@ public class PlaceListener implements Listener {
 	            } catch (Exception e) {}
 	            
 	            creatureSpawner.update();
-	            event.getBlockPlaced().setMetadata("ALREADY_FOUND", new FixedMetadataValue(SpawnerPlugin.getPlugin(), true));
-	            
 	            
 	            String WORLD_NAME = event.getBlockPlaced().getWorld().getName();
 	            Location BL = event.getBlockPlaced().getLocation();

@@ -12,7 +12,7 @@ public enum Lang {
     INVALID_MOB_NAME("invalid_mob_name", "&f > &4Invalid usage of /spawners alter <mobtype>, type a valid mob name."),
     INVALID_SPAWNER_TYPE("invalid_spawner_type", "&f > &4Invalid spawner type, was this picked up with a silk touch item?"),
     COMMANDS_TITLE("commands_title", " ---- Spawners - Commands ---- "),
-    COMMANDS_COMMANDS("commands_commands", "/spawners alter <mobtype>."),
+    COMMANDS_COMMANDS("commands_commands", "/spawners alter <mobtype>. test\ntest\ntest"),
     SPAWNER_ALTER_SUCCESS("spawner_alter_success", "&f > Spawner type altered successfully, changed to &a{0}&f."),
     SPAWNER_ALTER_FAIL("spawner_alter_fail", "&f > A Spawner must be held in your hand!"),
     SPAWNER_PLACE_TO_PLAYER("spawner_placed_player", "You placed a &a{0} &fspawner."),

@@ -2,6 +2,7 @@ package pw.arx.spawnerplugin;
 
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,43 +13,86 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class CommandListener implements CommandExecutor {
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
-
+	private String CFG_YML = "config.yml";
+	private String LANG_YML = "eng.yml";
+	private String SPAWNERS_YML = "spawners-placed.yml";
+	
+	public static String c(String i) {
+		return ChatColor.translateAlternateColorCodes('&',i);
+	}
+	
+	public static String changed(String before, String after) {
+		if(before.equals(after)) {
+			return "";
+		}
+		return c(" &4&l<-&r&4 Changed ");
+	}
+	
+	public static String configBit(String find, FileConfiguration before, FileConfiguration after) {
+		return after.getString(find) + changed(before.getString(find), after.getString(find));
+	}
+	
+	public static Boolean senderIsPlayer(CommandSender sender) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(Lang.NO_CONSOLE.getConfigValue(new String[] {}));
 			return false;
 		}
+		return true;
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
 
-		Player player = (Player) sender;
+		
+		
 
 		if (args.length == 0) {
-			player.sendMessage(Lang.COMMANDS_TITLE.getConfigValue(new String[] {}));
-			player.sendMessage(Lang.COMMANDS_COMMANDS.getConfigValue(new String[] {}));
+			sender.sendMessage(Lang.COMMANDS_TITLE.getConfigValue(new String[] {}));
+			sender.sendMessage(Lang.COMMANDS_COMMANDS.getConfigValue(new String[] {}));
 			return false;
 		}
 		
 		if (args[0].equalsIgnoreCase("reload")) {
-			if(!player.hasPermission("spawner.reload")) {
-				player.sendMessage(Lang.NO_PERMISSION.getConfigValue(new String[] {}));
+			if(!sender.hasPermission("spawner.reload")) {
+				sender.sendMessage(Lang.NO_PERMISSION.getConfigValue(new String[] {}));
 				return false;
 			}
 			
-			SpawnerPlugin.getPlugin().getConfigFound().reloadConfig();
-			SpawnerPlugin.getPlugin().getLangFound().reloadConfig();
-			SpawnerPlugin.getPlugin().getSpawnersFound().reloadConfig();
+			FileConfiguration ConfigBefore = SpawnerPlugin.getPlugin().getConfigFound().getConfig();
+			SpawnerPlugin.getPlugin().getConfigFound().reloadConfig("config.yml");
+			FileConfiguration ConfigAfter = SpawnerPlugin.getPlugin().getConfigFound().getConfig();
 			
-			player.sendMessage("Reload True");
+			sender.sendMessage(c("&f---- " + CFG_YML));
+			for(String key : ConfigAfter.getKeys(false)){
+				sender.sendMessage(c("&e" + key + ": &f") + configBit(key, ConfigBefore, ConfigAfter));
+			}
+			
+			FileConfiguration LangConfigBefore = SpawnerPlugin.getPlugin().getLangFound().getConfig();
+			SpawnerPlugin.getPlugin().getLangFound().reloadConfig("eng.yml");
+			FileConfiguration LangConfigAfter = SpawnerPlugin.getPlugin().getLangFound().getConfig();
+			
+			sender.sendMessage(c("&f---- " + LANG_YML));
+			for(String key : LangConfigAfter.getKeys(false)){
+				sender.sendMessage(c("&e" + key + ": &f") + configBit(key, LangConfigBefore, LangConfigAfter));
+			}
+			
+			SpawnerPlugin.getPlugin().getSpawnersFound().reloadConfig("spawners-placed.yml");
+			sender.sendMessage(c("&f---- " + SPAWNERS_YML));
+
 			return true;
 			
 		}
 		
 		if (args[0].equalsIgnoreCase("alter")) {
+			
+			if(senderIsPlayer(sender) == false)
+				return false;
+			
+			// otherwise.. we know it's a player!
+			Player player = (Player) sender;
 			
 			if(!player.hasPermission("spawner.alter")) {
 				player.sendMessage(Lang.NO_PERMISSION.getConfigValue(new String[] {}));
@@ -89,7 +133,7 @@ public class CommandListener implements CommandExecutor {
 			}
 			return true;
 		} else {
-			player.sendMessage(Lang.INVALID_MOB_NAME.getConfigValue(new String[] {}));
+			sender.sendMessage(Lang.INVALID_MOB_NAME.getConfigValue(new String[] {}));
 			return false;
 		}
 	}
