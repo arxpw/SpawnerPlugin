@@ -1,0 +1,7 @@
+name: SpawnerPlugin
+main: pw.arx.spawnerplugin.SpawnerPlugin
+version: 1.1
+api-version: 1.13
+commands:
+  spawners:
+    description: Allows you to alter a spawner held in your hand
